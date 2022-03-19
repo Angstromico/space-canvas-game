@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Canvas Game Bullet Hell Style on Space" />
+    <meta
+      property="og:title"
+      content="Manuel Morales Canvas Space Shooting Game"
+    />
+    <meta
+      property="og:image"
+      content="https://raw.githubusercontent.com/Angstromico/space-canvas-game/master/canvas.png"
+    />
+    <meta property="fb:app_id" content="1234567890" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://manuel-morales-space.canvas.game.netlify.app/"
+    />
+
+    <meta
+      property="og:description"
+      content="A Canvas Game to Shooting on Space"
+    />
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta
+      property="twitter:image"
+      content="https://raw.githubusercontent.com/Angstromico/space-canvas-game/master/canvas.png"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="normalize.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+      crossorigin="anonymous"
+    />
+    <title>Space Game</title>
+  </head>
+  <body>
+    <!-- Sounds Effects  -->
+    <audio id="laser" src="music/laser.wav"></audio>
+    <audio id="impact" src="music/short.wav"></audio>
+    <audio id="destruction" src="music/metal.wav"></audio>
+    <audio id="over" src="music/laught.mp3"></audio>
+    <!-- OST -->
+    <audio id="main" loop src="music/main.mp3"></audio>
+    <audio id="pause" loop src="music/pause.mp3"></audio>
+    <div class="fixed text-white ml-2 mt-1 select-none">
+      <span>SCORE:</span><span id="score"> 0</span>
+    </div>
+    <canvas></canvas>
+    <div
+      class="fixed inset-0 flex items-center justify-center"
+      id="initial"
+      style="overflow-y: scroll"
+    >
+      <div class="bg-white mx-w-md w-full p-6 text-center">
+        <!-- <section class="top-nav">
+          <div>Logo Here</div>
+          <input id="menu-toggle" type="checkbox" />
+          <label
+            class="menu-button-container"
+            id="true-toggle"
+            for="menu-toggle"
+          >
+            <div class="menu-button">
+              <span id="first"></span><span id="second"></span>
+            </div>
+          </label>
+          <div class="w-full max-w-xs form invisible">
+            <form
+              class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 value"
+              id="register"
+            >
+              <div class="mb-4">
+                <label
+                  class="block text-gray-700 text-sm font-bold mb-2"
+                  for="username"
+                >
+                  Username
+                </label>
+                <input
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="text"
+                  placeholder="Username"
+                />
+              </div>
+
+              <div class="flex items-center justify-between">
+                <button
+                  class="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed"
+                  type="submit"
+                  id="btnSubmit"
+                >
+                  Player Name
+                </button>
+              </div>
+            </form>
+            <p class="text-center text-gray-500 text-xs">
+              &copy;2020 Acme Corp. All rights reserved.
+            </p>
+          </div>
+        </section> -->
+        <!--Navbar-->
+        <!--Navbar-->
+        <div class="navbar-container">
+          <nav class="navbar navbar-light amber lighten-4 mb-4">
+            <!-- Navbar brand -->
+            <a class="navbar-brand" href="/"
+              >Add Player <span class="arrow">&#8594;</span></a
+            >
+
+            <!-- Collapse button -->
+            <button
+              class="navbar-toggler first-button"
+              type="button"
+              data-toggle="collapse"
+              data-target="#navbarSupportedContent20"
+              aria-controls="navbarSupportedContent20"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+            >
+              <div class="animated-icon1">
+                <span></span><span></span><span></span>
+              </div>
+            </button>
+
+            <!-- Collapsible content -->
+            <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent20">
+            <form
+              class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 value"
+              id="register"
+            >
+              <div class="mb-4">
+                <label
+                  class="block text-gray-700 text-sm font-bold mb-2"
+                  for="username"
+                >
+                  Username
+                </label>
+                <input
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="username"
+                  type="text"
+                  placeholder="Username"
+                />
+              </div>
+
+              <div class="flex items-center justify-between">
+                <button
+                  class="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed"
+                  type="submit"
+                  id="btnSubmit"
+                >
+                  Player Name
+                </button>
+              </div>
+            </form>
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="#"
+                  >Home <span class="sr-only">(current)</span></a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Features</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Pricing</a>
+              </li>
+            </ul>
+          </div> -->
+            <!-- Collapsible content -->
+          </nav>
+          <!--/.Navbar-->
+        </div>
+
+        <div class="form-container" id="form-container">
+          <form
+            class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 value toggle-form"
+            id="register"
+          >
+            <div class="mb-4">
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="username"
+              >
+                Username
+              </label>
+              <input
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="username"
+                type="text"
+                placeholder="Username"
+              />
+            </div>
+
+            <div class="flex items-center justify-between">
+              <button
+                class="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed"
+                type="submit"
+                id="btnSubmit"
+              >
+                Player Name
+              </button>
+            </div>
+          </form>
+        </div>
+        <h1 id="score2" class="text-4xl font-bold leading-none">0</h1>
+        <p class="text-sm text-gray-700 mb-4">Points</p>
+        <div>
+          <button
+            id="start"
+            class="font-bold bg-yellow-500 text-white w-full py-3 rounded-full text-sm"
+          >
+            START GAME
+          </button>
+          <div class="sounds container items-center">
+            <div class="images">
+              <img
+                src="img/no.png"
+                alt="no"
+                class="object-cover md:h-33 md:w-56 h-25 w-40 no"
+              /><img
+                src="img/sound.png"
+                alt="sound"
+                class="object-cover md:h-33 md:w-56 h-25 w-40 sound chosen"
+              />
+            </div>
+            <div class="sounds-bar">
+              <button
+                id="sounds-off"
+                class="font-bold bg-blue-500 text-white w-1/2 py-3 rounded-full text-sm"
+              >
+                DISABLE AMBIENT SOUNDS
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="levels">
+          <div class="inner-levels level-chosen"><h2>Easy</h2></div>
+          <div class="inner-levels"><h2>Normal</h2></div>
+          <div class="inner-levels"><h2>Hard</h2></div>
+        </div>
+
+        <button
+          id="show-list"
+          class="show-list text-center text-base mb-5 mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Show List
+        </button>
+
+        <div class="score-list toggle">
+          <h1 class="max-score text-center text-base mb-5 mt-5">BEST SCORES</h1>
+          <ul class="list list-none hover:list-disc shadow"></ul>
+          <div class="inner-list" id="inner"></div>
+          <div class="button-container flex justify-center">
+            <button
+              id="show-all"
+              class="show-list text-center text-base mb-5 mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded py-2 px-1"
+            >
+              Show All Results
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"
+      integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="./index.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
