@@ -53,12 +53,13 @@
       <span>SCORE:</span><span id="score"> 0</span>
     </div>
     <canvas></canvas>
+
     <div
       class="fixed inset-0 flex items-center justify-center"
       id="initial"
       style="overflow-y: scroll"
     >
-      <div class="bg-white mx-w-md w-full p-6 text-center">
+      <div class="bg-white mx-w-md w-full p-6 text-center max-w-screen-xl">
         <!-- <section class="top-nav">
           <div>Logo Here</div>
           <input id="menu-toggle" type="checkbox" />
@@ -216,7 +217,7 @@
         <div>
           <button
             id="start"
-            class="font-bold bg-yellow-500 text-white w-full py-3 rounded-full text-sm"
+            class="font-bold bg-yellow-400 text-white w-full py-3 rounded-full text-lg hover:bg-yellow-500 transition-all ease-in-out duration-500"
           >
             START GAME
           </button>
@@ -235,7 +236,7 @@
             <div class="sounds-bar">
               <button
                 id="sounds-off"
-                class="font-bold bg-blue-500 text-white w-1/2 py-3 rounded-full text-sm"
+                class="font-bold bg-blue-500 text-white w-1/2 py-3 rounded-full text-lg hover:bg-blue-600 transition-all ease-in-out duration-500"
               >
                 DISABLE AMBIENT SOUNDS
               </button>
@@ -250,7 +251,7 @@
 
         <button
           id="show-list"
-          class="show-list text-center text-base mb-5 mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          class="show-list text-center text-base mb-5 mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-lg"
         >
           Show List
         </button>
@@ -270,6 +271,7 @@
         </div>
       </div>
     </div>
+
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"
       integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="
