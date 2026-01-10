@@ -12,6 +12,13 @@ const start = document.getElementById('start')!
 const initial = document.getElementById('initial')!
 const score2 = document.getElementById('score2')!
 
+// UI for Lives
+const livesContainer = document.createElement('div')
+livesContainer.id = 'lives-container'
+livesContainer.className =
+  'fixed text-white ml-2 mt-8 select-none text-xl font-bold'
+document.body.appendChild(livesContainer)
+
 // Type definitions for audio elements
 const mainMusic = document.getElementById('main') as HTMLAudioElement
 const pauseSong = document.getElementById('pause') as HTMLAudioElement
@@ -30,7 +37,7 @@ const showList = document.getElementById('show-list')!
 
 interface ScoreEntry {
   name: string
-  puntuation: any // In the original code puntuation seems to be string or number
+  puntuation: any
 }
 
 interface PlayerSettings {
@@ -127,11 +134,54 @@ interface Velocity {
   y: number
 }
 
+// PowerUp Types
+type PowerUpType = 'RapidFire' | 'Shield'
+
+class PowerUp {
+  x: number
+  y: number
+  radius: number
+  color: string
+  type: PowerUpType
+  image: HTMLImageElement | null // Placeholder for future images
+
+  constructor(x: number, y: number, type: PowerUpType) {
+    this.x = x
+    this.y = y
+    this.radius = 15
+    this.type = type
+    this.color = type === 'RapidFire' ? 'red' : 'cyan'
+    this.image = null
+  }
+
+  draw() {
+    c.beginPath()
+    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
+    c.fillStyle = this.color
+    c.fill()
+
+    // Text label
+    c.fillStyle = 'white'
+    c.font = '10px Arial'
+    c.textAlign = 'center'
+    c.textBaseline = 'middle'
+    c.fillText(this.type === 'RapidFire' ? 'RF' : 'SH', this.x, this.y)
+  }
+
+  update() {
+    this.draw()
+    // Slowly move down or float? Let's just float
+  }
+}
+
 class Player {
   x: number
   y: number
   radius: number
   color: string
+  isInvulnerable: boolean = false
+  activePowerUp: PowerUpType | null = null
+  powerUpTimer: any = null
 
   constructor(x: number, y: number, radius: number, color: string) {
     this.x = x
@@ -144,7 +194,35 @@ class Player {
     c.beginPath()
     c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
     c.fillStyle = this.color
+
+    // Visual feedback for invulnerability
+    if (this.isInvulnerable) {
+      c.globalAlpha = 0.5
+      if (Math.floor(Date.now() / 100) % 2 === 0) {
+        c.fillStyle = 'white'
+      }
+    }
+
     c.fill()
+    c.globalAlpha = 1.0 // Reset alpha
+
+    // Shield Visual
+    if (this.activePowerUp === 'Shield') {
+      c.beginPath()
+      c.arc(this.x, this.y, this.radius + 10, 0, Math.PI * 2, false)
+      c.strokeStyle = 'cyan'
+      c.lineWidth = 3
+      c.stroke()
+    }
+  }
+
+  activatePowerUp(type: PowerUpType) {
+    this.activePowerUp = type
+    if (this.powerUpTimer) clearTimeout(this.powerUpTimer)
+
+    this.powerUpTimer = setTimeout(() => {
+      this.activePowerUp = null
+    }, 5000) // 5 seconds duration
   }
 }
 
@@ -183,25 +261,46 @@ class Projectile {
   }
 }
 
+// Enemy Types
+type EnemyType = 'Normal' | 'Homing' | 'Tank'
+
 class Enemy {
   x: number
   y: number
   radius: number
   color: string
   speed: Velocity
+  type: EnemyType
+  health: number
 
   constructor(
     x: number,
     y: number,
     radius: number,
     color: string,
-    speed: Velocity
+    speed: Velocity,
+    type: EnemyType = 'Normal'
   ) {
     this.x = x
     this.y = y
     this.radius = radius
     this.color = color
     this.speed = speed
+    this.type = type
+
+    // Tank has more health/size, Homing is weak
+    if (this.type === 'Tank') {
+      this.health = 5
+      this.color = 'green'
+      this.speed.x *= 0.5
+      this.speed.y *= 0.5
+    } else if (this.type === 'Homing') {
+      this.health = 1
+      this.color = 'yellow'
+      // Homing is fast usually, but logic is in update
+    } else {
+      this.health = 1
+    }
   }
 
   draw() {
@@ -213,8 +312,18 @@ class Enemy {
 
   update() {
     this.draw()
-    this.x = this.x + this.speed.x
-    this.y = this.y + this.speed.y
+
+    if (this.type === 'Homing') {
+      // Recalculate velocity towards player
+      const angle = Math.atan2(player.y - this.y, player.x - this.x)
+      // Homing speed
+      const speedMultiplier = 1.5
+      this.x += Math.cos(angle) * speedMultiplier
+      this.y += Math.sin(angle) * speedMultiplier
+    } else {
+      this.x = this.x + this.speed.x
+      this.y = this.y + this.speed.y
+    }
   }
 }
 
@@ -263,6 +372,81 @@ class BluePrint {
   }
 }
 
+class FloatingText {
+  x: number
+  y: number
+  text: string
+  color: string
+  life: number
+  alpha: number
+  velocity: Velocity
+
+  constructor(x: number, y: number, text: string, color: string) {
+    this.x = x
+    this.y = y
+    this.text = text
+    this.color = color
+    this.life = 60 // Frames to live
+    this.alpha = 1
+    this.velocity = {
+      x: (Math.random() - 0.5) * 2,
+      y: -2, // Move up
+    }
+  }
+
+  draw() {
+    c.save()
+    c.globalAlpha = this.alpha
+    c.font = 'bold 20px Arial'
+    c.fillStyle = this.color
+    c.fillText(this.text, this.x, this.y)
+    c.restore()
+  }
+
+  update() {
+    this.draw()
+    this.x += this.velocity.x
+    this.y += this.velocity.y
+    this.life--
+    this.alpha = this.life / 60
+  }
+}
+
+class BackgroundParticle {
+  x: number
+  y: number
+  radius: number
+  color: string
+  velocity: Velocity
+
+  constructor() {
+    this.x = Math.random() * canvas.width
+    this.y = Math.random() * canvas.height
+    this.radius = Math.random() * 2
+    this.color = `rgba(255, 255, 255, ${Math.random() * 0.5})`
+    this.velocity = {
+      x: 0,
+      y: Math.random() * 0.5 + 0.1,
+    }
+  }
+
+  draw() {
+    c.beginPath()
+    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
+    c.fillStyle = this.color
+    c.fill()
+  }
+
+  update() {
+    this.draw()
+    this.y += this.velocity.y
+    if (this.y > canvas.height) {
+      this.y = 0
+      this.x = Math.random() * canvas.width
+    }
+  }
+}
+
 const x = canvas.width / 2
 const y = canvas.height / 2
 
@@ -279,20 +463,65 @@ const setColor = () => {
 let projectiles: Projectile[] = []
 let enemies: Enemy[] = []
 let particles: BluePrint[] = []
+let powerUps: PowerUp[] = []
+let floatingTexts: FloatingText[] = []
+let backgroundStars: BackgroundParticle[] = []
 
 let dinamicScore = 0
+let lives = 3
+
+function updateLivesUI() {
+  livesContainer.innerHTML = `LIVES: ${'❤️'.repeat(lives)}`
+}
+
+function createScoreLabel(
+  x: number,
+  y: number,
+  score: number | string,
+  color: string = 'white'
+) {
+  const text = typeof score === 'number' ? `+${score}` : score
+  floatingTexts.push(new FloatingText(x, y, text as string, color))
+}
 
 function init() {
   player = new Player(x, y, 25, 'blue')
   projectiles = []
   enemies = []
   particles = []
+  powerUps = []
+  floatingTexts = []
+  backgroundStars = []
+  // Create stars
+  for (let i = 0; i < 100; i++) {
+    backgroundStars.push(new BackgroundParticle())
+  }
+
   dinamicScore = 0
+  lives = 3
   score.innerHTML = dinamicScore.toString()
+  updateLivesUI()
 }
 
 function getRandomArbitrary(min: number, max: number) {
   return Math.random() * (max - min) + min
+}
+
+function spawnPowerUps() {
+  setInterval(() => {
+    // Spawn chance every 10 seconds (or logic based on time)
+    // Let's just spawn randomly for now
+    const x = Math.random() * canvas.width
+    const y = Math.random() * canvas.height
+    const type: PowerUpType = Math.random() < 0.5 ? 'RapidFire' : 'Shield'
+    powerUps.push(new PowerUp(x, y, type))
+
+    // Remove after 10s if not picked up
+    setTimeout(() => {
+      const idx = powerUps.findIndex((p) => p.x === x && p.y === y)
+      if (idx > -1) powerUps.splice(idx, 1)
+    }, 10000)
+  }, 15000) // Every 15 seconds
 }
 
 function newEnemies() {
@@ -320,8 +549,14 @@ function newEnemies() {
       y: Math.sin(angle),
     }
 
+    // Determine Enemy Type
+    const rand = Math.random()
+    let type: EnemyType = 'Normal'
+    if (rand < 0.2) type = 'Homing' // 20% chance
+    else if (rand < 0.35) type = 'Tank' // 15% chance
+
     enemies.push(
-      new Enemy(xCoordinate, yCoordinate, newRadius, brandColor, velocity)
+      new Enemy(xCoordinate, yCoordinate, newRadius, brandColor, velocity, type)
     )
   }, difficulty)
 }
@@ -338,7 +573,32 @@ function animation() {
   animationID = requestAnimationFrame(animation)
   c.fillStyle = 'rgba(0, 0, 0, 0.1)'
   c.fillRect(0, 0, canvas.width, canvas.height)
+
+  // Draw Stars
+  backgroundStars.forEach((star) => star.update())
+
   player.draw()
+
+  // Floating Text Update
+  floatingTexts.forEach((text, index) => {
+    text.update()
+    if (text.life <= 0) {
+      floatingTexts.splice(index, 1)
+    }
+  })
+
+  // PowerUp Logic
+  powerUps.forEach((powerUp, index) => {
+    powerUp.update()
+    const dist = Math.hypot(player.x - powerUp.x, player.y - powerUp.y)
+    if (dist - player.radius - powerUp.radius < 1) {
+      // Pick up
+      player.activatePowerUp(powerUp.type)
+      createScoreLabel(powerUp.x, powerUp.y, powerUp.type, 'cyan')
+      powerUps.splice(index, 1)
+      // TODO: Play powerup sound
+    }
+  })
 
   particles.forEach((particle, index) => {
     if (particle.alpha <= 0) {
@@ -363,20 +623,74 @@ function animation() {
 
     const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y)
 
-    // Game Over
+    // Collision Player-Enemy
     if (dist - enemy.radius - player.radius < 1) {
-      if (soundsEffects) {
-        if (overSong) overSong.play()
+      if (!player.isInvulnerable && player.activePowerUp !== 'Shield') {
+        lives--
+        updateLivesUI()
+        createScoreLabel(player.x, player.y, '-1 Life', 'red')
+
+        // Visual hit effect (red flash)
+        c.save()
+        c.fillStyle = 'rgba(255, 0, 0, 0.5)'
+        c.fillRect(0, 0, canvas.width, canvas.height)
+        c.restore()
+
+        if (lives <= 0) {
+          // Game Over
+          if (soundsEffects) {
+            if (overSong) overSong.play()
+          }
+          if (mainMusic) mainMusic.pause()
+          cancelAnimationFrame(animationID)
+          initial.style.display = 'flex'
+          score2.innerHTML = score.innerHTML
+          start.textContent = 'RESTART THE GAME'
+          init()
+          scorePoints = score2.innerHTML
+          initialSetting.scorePoints = scorePoints
+          savePlayerName(Number(score2.innerHTML))
+        } else {
+          if (soundsEffects) {
+            // Maybe a hurt sound here? Using impact for now
+            if (hitSound) {
+              hitSound.currentTime = 0
+              hitSound.play()
+            }
+          }
+          // Trigger Invulnerability
+          player.isInvulnerable = true
+          setTimeout(() => {
+            player.isInvulnerable = false
+          }, 2000) // 2 seconds invulnerability
+
+          // Clear the enemy that hit us
+          setTimeout(() => {
+            enemies.splice(index, 1)
+          }, 0)
+
+          // Push back nearby enemies slightly (optional feel-good mechanic)
+          enemies.forEach((e) => {
+            const d = Math.hypot(player.x - e.x, player.y - e.y)
+            if (d < 300) {
+              // Push away
+              const angle = Math.atan2(e.y - player.y, e.x - player.x)
+              e.x += Math.cos(angle) * 50
+              e.y += Math.sin(angle) * 50
+            }
+          })
+        }
+      } else if (player.activePowerUp === 'Shield') {
+        // Shield active, destroy enemy without getting hurt
+        if (soundsEffects) {
+          if (destructionSound) {
+            destructionSound.currentTime = 0
+            destructionSound.play()
+          }
+        }
+        enemies.splice(index, 1)
+        // Visual shield hit effect?
       }
-      if (mainMusic) mainMusic.pause()
-      cancelAnimationFrame(animationID)
-      initial.style.display = 'flex'
-      score2.innerHTML = score.innerHTML
-      start.textContent = 'RESTART THE GAME'
-      init()
-      scorePoints = score2.innerHTML
-      initialSetting.scorePoints = scorePoints
-      savePlayerName(Number(score2.innerHTML))
     }
 
     projectiles.forEach((projectile, shotIndex) => {
@@ -415,28 +729,50 @@ function animation() {
           )
         }
 
-        if (enemy.radius - 10 > 5) {
-          // Increase score
-          dinamicScore += 10
-          score.innerHTML = dinamicScore.toString()
+        if (enemy.radius - 10 > 5 && enemy.health <= 0) {
+          // Should check health logic if tank?
+          // Logic update: Tanks take hits
+          // If tank has health, reduce it and don't destroy yet
+        }
+
+        // Custom logic for tank health inside collision:
+        if (enemy.type === 'Tank' && enemy.health > 1) {
+          enemy.health--
+          createScoreLabel(enemy.x, enemy.y, 'Hit!', 'white')
           gsap.to(enemy, {
             radius: enemy.radius - 5,
           })
+          // Don't destroy enemy, just projectile
           setTimeout(() => {
             projectiles.splice(shotIndex, 1)
           }, 0)
         } else {
-          if (soundsEffects) {
-            if (destructionSound) destructionSound.play()
-          }
+          // Normal destroy or Tank destroyed
+          if (enemy.radius - 10 > 5) {
+            // Increase score
+            dinamicScore += 10
+            score.innerHTML = dinamicScore.toString()
+            createScoreLabel(enemy.x, enemy.y, '+10', 'white')
+            gsap.to(enemy, {
+              radius: enemy.radius - 5,
+            })
+            setTimeout(() => {
+              projectiles.splice(shotIndex, 1)
+            }, 0)
+          } else {
+            if (soundsEffects) {
+              if (destructionSound) destructionSound.play()
+            }
 
-          // Increase score
-          dinamicScore += 20
-          score.innerHTML = dinamicScore.toString()
-          setTimeout(() => {
-            enemies.splice(index, 1)
-            projectiles.splice(shotIndex, 1)
-          }, 0)
+            // Increase score
+            dinamicScore += 20
+            score.innerHTML = dinamicScore.toString()
+            createScoreLabel(enemy.x, enemy.y, '+20', 'gold')
+            setTimeout(() => {
+              enemies.splice(index, 1)
+              projectiles.splice(shotIndex, 1)
+            }, 0)
+          }
         }
       }
     })
@@ -461,13 +797,23 @@ canvas.onclick = (e) => {
     x: Math.cos(angle) * 3,
     y: Math.sin(angle) * 3,
   }
-  projectiles.push(new Projectile(x, y, 5, 'white', velocity))
+
+  // Rapid Fire Logic (Dual Shot)
+  if (player.activePowerUp === 'RapidFire') {
+    // Shot 1 (Offset left)
+    projectiles.push(new Projectile(x - 10, y, 5, 'red', velocity))
+    // Shot 2 (Offset right)
+    projectiles.push(new Projectile(x + 10, y, 5, 'red', velocity))
+  } else {
+    projectiles.push(new Projectile(x, y, 5, 'white', velocity))
+  }
 }
 
 start.onclick = () => {
   // Start Game
   animation()
   newEnemies()
+  spawnPowerUps()
   initial.style.display = 'none'
 }
 
