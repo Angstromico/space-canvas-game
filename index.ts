@@ -67,6 +67,13 @@ const initialSetting: PlayerSettings = localSettings || {
 let { music, sounds, playerName, scorePoints, difficulty } = initialSetting
 let playerId: string | undefined = playerName
 
+const updatePilotDisplay = () => {
+  const display = document.getElementById('current-pilot-display')
+  if (display) {
+    display.textContent = (playerId && playerId.trim() !== '' ? playerId : 'RECRUIT').toUpperCase()
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   if (localInfo) {
     showList.classList.remove('hide')
@@ -98,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ;(levels[2] as HTMLElement).click()
     }
   }
+  updatePilotDisplay()
 })
 
 const burger = document.querySelector('.animated-icon1') as HTMLElement
@@ -1054,19 +1062,18 @@ const userInput = document.getElementById('username') as HTMLInputElement
 const namePlayer = document.getElementById('register') as HTMLFormElement
 
 if (userInput) {
-  userInput.onchange = () => {
-    if (userInput.value !== '') {
-      $('#btnSubmit').attr('disabled', 'false') // Removing attribute is better: .removeAttr('disabled') or .prop('disabled', false)
+  userInput.oninput = () => {
+    if (userInput.value.trim() !== '') {
       $('#btnSubmit').removeAttr('disabled')
       if (btn) {
         btn.className =
-          'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline'
+          'w-full bg-cyan-500 hover:bg-cyan-600 text-slate-950 font-bold py-2.5 px-4 rounded-xl font-orbitron tracking-widest text-xs uppercase shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all duration-300'
       }
     } else {
       $('#btnSubmit').attr('disabled', 'true')
       if (btn) {
         btn.className =
-          'bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed'
+          'w-full bg-slate-800 text-slate-500 font-bold py-2.5 px-4 rounded-xl opacity-50 cursor-not-allowed font-orbitron tracking-widest text-xs uppercase'
       }
     }
   }
@@ -1077,13 +1084,20 @@ if (namePlayer) {
     e.preventDefault()
     const userName = (document.getElementById('username') as HTMLInputElement)
       .value
-    if (userName !== '') {
+    if (userName.trim() !== '') {
       playerId = userName
       playerName = userName
       initialSetting.playerName = playerName
+      updatePilotDisplay()
     }
     namePlayer.reset()
-    alert(`Your Name was Register as ${playerId}`)
+    if (btn) {
+      btn.className =
+        'w-full bg-slate-800 text-slate-500 font-bold py-2.5 px-4 rounded-xl opacity-50 cursor-not-allowed font-orbitron tracking-widest text-xs uppercase'
+      $('#btnSubmit').attr('disabled', 'true')
+    }
+    // Show a beautiful custom feedback modal or update HUD name!
+    alert(`Your callsign is registered as: ${playerId}`)
   })
 }
 

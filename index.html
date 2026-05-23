@@ -29,6 +29,9 @@
       property="twitter:image"
       content="https://raw.githubusercontent.com/Angstromico/space-canvas-game/master/canvas.png"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="normalize.css" />
     <link rel="stylesheet" href="style.css" />
@@ -55,220 +58,163 @@
     <canvas></canvas>
 
     <div
-      class="fixed inset-0 flex items-center justify-center"
+      class="fixed inset-0 flex items-center justify-center bg-slate-950/50 backdrop-blur-sm z-50 overflow-y-auto p-4 select-none"
       id="initial"
-      style="overflow-y: scroll"
     >
-      <div class="bg-white mx-w-md w-full p-6 text-center max-w-screen-xl">
-        <!-- <section class="top-nav">
-          <div>Logo Here</div>
-          <input id="menu-toggle" type="checkbox" />
-          <label
-            class="menu-button-container"
-            id="true-toggle"
-            for="menu-toggle"
-          >
-            <div class="menu-button">
-              <span id="first"></span><span id="second"></span>
-            </div>
-          </label>
-          <div class="w-full max-w-xs form invisible">
-            <form
-              class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 value"
-              id="register"
-            >
-              <div class="mb-4">
-                <label
-                  class="block text-gray-700 text-sm font-bold mb-2"
-                  for="username"
-                >
-                  Username
-                </label>
-                <input
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="username"
-                  type="text"
-                  placeholder="Username"
-                />
-              </div>
-
-              <div class="flex items-center justify-between">
-                <button
-                  class="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed"
-                  type="submit"
-                  id="btnSubmit"
-                >
-                  Player Name
-                </button>
-              </div>
-            </form>
-            <p class="text-center text-gray-500 text-xs">
-              &copy;2020 Acme Corp. All rights reserved.
+      <div class="relative w-full max-w-4xl p-6 md:p-8 rounded-3xl bg-slate-950/90 backdrop-blur-xl border border-cyan-500/20 shadow-[0_0_50px_rgba(6,182,212,0.15)] text-white mx-auto flex flex-col md:grid md:grid-cols-12 md:gap-8 max-h-[90vh] overflow-y-auto font-rajdhani">
+        
+        <!-- LEFT PANEL: Mission Hub -->
+        <div class="md:col-span-6 flex flex-col justify-between space-y-6">
+          
+          <!-- Logo & Title -->
+          <div class="text-center md:text-left space-y-1">
+            <h1 class="text-4xl md:text-5xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 font-orbitron drop-shadow-[0_0_15px_rgba(6,182,212,0.4)] uppercase neon-pulse">
+              NEBULA STRIKE
+            </h1>
+            <p class="text-cyan-400/80 text-xs tracking-[0.3em] font-orbitron uppercase font-bold">
+              Canvas Space Tactical Shooter
             </p>
           </div>
-        </section> -->
-        <!--Navbar-->
-        <!--Navbar-->
-        <div class="navbar-container">
-          <nav class="navbar navbar-light amber lighten-4 mb-4">
-            <!-- Navbar brand -->
-            <a class="navbar-brand" href="/"
-              >Add Player <span class="arrow">&#8594;</span></a
-            >
 
-            <!-- Collapse button -->
+          <!-- Pilot Dashboard -->
+          <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl p-4 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:100%_4px] pointer-events-none"></div>
+            <div class="relative flex items-center justify-between">
+              <div class="text-left">
+                <p class="text-[10px] text-slate-400 tracking-wider font-orbitron uppercase">MISSION SCORE</p>
+                <div class="flex items-baseline gap-1 mt-1">
+                  <span id="score2" class="text-4xl font-bold font-orbitron text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.25)]">0</span>
+                  <span class="text-xs text-slate-500 font-orbitron">PTS</span>
+                </div>
+              </div>
+              <div class="h-10 w-[1px] bg-slate-800"></div>
+              <div class="text-right">
+                <p class="text-[10px] text-slate-400 tracking-wider font-orbitron uppercase">ACTIVE PILOT</p>
+                <span id="current-pilot-display" class="text-lg font-bold font-orbitron text-cyan-400 tracking-wide uppercase drop-shadow-[0_0_8px_rgba(34,211,238,0.25)] block mt-1">RECRUIT</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Launch Button Container -->
+          <div class="relative group w-full">
+            <div class="absolute -inset-1 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000 group-hover:duration-200 animate-pulse"></div>
             <button
-              class="navbar-toggler first-button"
-              type="button"
-              data-toggle="collapse"
-              data-target="#navbarSupportedContent20"
-              aria-controls="navbarSupportedContent20"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
+              id="start"
+              class="relative w-full py-4 bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-black tracking-widest text-lg rounded-full font-orbitron shadow-[0_0_20px_rgba(234,179,8,0.2)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] transform hover:scale-[1.01] transition-all duration-300 uppercase overflow-hidden"
             >
-              <div class="animated-icon1">
-                <span></span><span></span><span></span>
-              </div>
+              START GAME
             </button>
+          </div>
 
-            <!-- Collapsible content -->
-            <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent20">
-            <form
-              class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 value"
-              id="register"
-            >
-              <div class="mb-4">
-                <label
-                  class="block text-gray-700 text-sm font-bold mb-2"
-                  for="username"
-                >
-                  Username
-                </label>
-                <input
-                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="username"
-                  type="text"
-                  placeholder="Username"
-                />
+          <!-- Audio Cockpit Controls -->
+          <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4">
+            <p class="text-xs text-slate-400 tracking-widest font-orbitron uppercase mb-3 text-left">System Sound Feed</p>
+            <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
+              <!-- Music Mute controls -->
+              <div class="flex items-center justify-between w-full sm:w-auto gap-3 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80">
+                <span class="text-[10px] text-slate-400 font-orbitron uppercase pl-2">MUSIC</span>
+                <div class="flex gap-1.5">
+                  <div class="no px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center">
+                    MUTE
+                  </div>
+                  <div class="sound chosen px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center">
+                    PLAY
+                  </div>
+                </div>
               </div>
 
-              <div class="flex items-center justify-between">
-                <button
-                  class="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed"
-                  type="submit"
-                  id="btnSubmit"
-                >
-                  Player Name
-                </button>
-              </div>
-            </form>
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item active">
-                <a class="nav-link" href="#"
-                  >Home <span class="sr-only">(current)</span></a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Features</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Pricing</a>
-              </li>
-            </ul>
-          </div> -->
-            <!-- Collapsible content -->
-          </nav>
-          <!--/.Navbar-->
-        </div>
-
-        <div class="form-container" id="form-container">
-          <form
-            class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 value toggle-form"
-            id="register"
-          >
-            <div class="mb-4">
-              <label
-                class="block text-gray-700 text-sm font-bold mb-2"
-                for="username"
-              >
-                Username
-              </label>
-              <input
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="username"
-                type="text"
-                placeholder="Username"
-              />
-            </div>
-
-            <div class="flex items-center justify-between">
-              <button
-                class="bg-blue-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed"
-                type="submit"
-                id="btnSubmit"
-              >
-                Player Name
-              </button>
-            </div>
-          </form>
-        </div>
-        <h1 id="score2" class="text-4xl font-bold leading-none">0</h1>
-        <p class="text-sm text-gray-700 mb-4">Points</p>
-        <div>
-          <button
-            id="start"
-            class="font-bold bg-yellow-400 text-white w-full py-3 rounded-full text-lg hover:bg-yellow-500 transition-all ease-in-out duration-500"
-          >
-            START GAME
-          </button>
-          <div class="sounds container items-center">
-            <div class="images">
-              <img
-                src="img/no.png"
-                alt="no"
-                class="object-cover md:h-33 md:w-56 h-25 w-40 no"
-              /><img
-                src="img/sound.png"
-                alt="sound"
-                class="object-cover md:h-33 md:w-56 h-25 w-40 sound chosen"
-              />
-            </div>
-            <div class="sounds-bar">
+              <!-- Ambient button -->
               <button
                 id="sounds-off"
-                class="font-bold bg-blue-500 text-white w-1/2 py-3 rounded-full text-lg hover:bg-blue-600 transition-all ease-in-out duration-500"
+                class="w-full sm:w-auto font-orbitron font-bold text-[10px] px-3 py-2.5 rounded-xl border border-blue-500/20 bg-blue-950/15 text-blue-400 hover:bg-blue-950/30 hover:border-blue-500/40 transition-all duration-300 uppercase"
               >
                 DISABLE AMBIENT SOUNDS
               </button>
             </div>
           </div>
-        </div>
-        <div class="levels">
-          <div class="inner-levels level-chosen"><h2>Easy</h2></div>
-          <div class="inner-levels"><h2>Normal</h2></div>
-          <div class="inner-levels"><h2>Hard</h2></div>
+
         </div>
 
-        <button
-          id="show-list"
-          class="show-list text-center text-base mb-5 mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-lg"
-        >
-          Show List
-        </button>
+        <!-- RIGHT PANEL: Config & Records -->
+        <div class="md:col-span-6 flex flex-col space-y-6 mt-6 md:mt-0">
+          
+          <!-- Pilot Registry Header / Toggler -->
+          <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4">
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-3">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <span class="text-xs font-bold text-slate-200 tracking-widest font-orbitron uppercase">Pilot Registry</span>
+              </div>
+              <button class="first-button flex items-center justify-center p-1 rounded-lg hover:bg-slate-800/80 transition-all text-cyan-400" type="button">
+                <div class="animated-icon1">
+                  <span></span><span></span><span></span>
+                </div>
+              </button>
+              <a class="navbar-brand hidden" href="/">Add Player</a> <!-- Kept for compatibility but hidden -->
+            </div>
 
-        <div class="score-list toggle">
-          <h1 class="max-score text-center text-base mb-5 mt-5">BEST SCORES</h1>
-          <ul class="list list-none hover:list-disc shadow"></ul>
-          <div class="inner-list" id="inner"></div>
-          <div class="button-container flex justify-center">
-            <button
-              id="show-all"
-              class="show-list text-center text-base mb-5 mt-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded py-2 px-1"
-            >
-              Show All Results
-            </button>
+            <!-- Pilot Registry Form -->
+            <div class="form-container relative w-full !p-0 !m-0 !top-0 !left-0 !position-relative" id="form-container">
+              <form
+                class="w-full value toggle-form !p-0 !m-0"
+                id="register"
+              >
+                <div class="mb-3">
+                  <input
+                    class="bg-slate-950 border border-slate-800 focus:border-cyan-500 text-white placeholder-slate-600 rounded-xl w-full py-2 px-3 focus:outline-none focus:ring-1 focus:ring-cyan-500/50 transition-all font-rajdhani text-base"
+                    id="username"
+                    type="text"
+                    placeholder="ENTER PILOT CALLSIGN"
+                    maxLength="15"
+                  />
+                </div>
+                <button
+                  class="w-full bg-slate-800 text-slate-500 font-bold py-2 px-4 rounded-xl opacity-50 cursor-not-allowed font-orbitron tracking-widest text-xs uppercase transition-all duration-300"
+                  type="submit"
+                  id="btnSubmit"
+                >
+                  Confirm Callsign
+                </button>
+              </form>
+            </div>
           </div>
+
+          <!-- Difficulty Control -->
+          <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4">
+            <p class="text-xs text-slate-400 tracking-widest font-orbitron uppercase mb-3 text-left">Sector Threat Level</p>
+            <div class="levels">
+              <div class="inner-levels level-chosen">EASY</div>
+              <div class="inner-levels">NORMAL</div>
+              <div class="inner-levels">HARD</div>
+            </div>
+          </div>
+
+          <!-- High Scores List -->
+          <div class="flex flex-col space-y-3">
+            <button
+              id="show-list"
+              class="show-list w-full text-center"
+            >
+              Show List
+            </button>
+
+            <div class="score-list toggle">
+              <h2 class="max-score text-center mb-4">BEST SCORES</h2>
+              <ul class="list list-none"></ul>
+              <div class="inner-list" id="inner"></div>
+              <div class="button-container flex justify-center mt-3">
+                <button
+                  id="show-all"
+                  class="show-list text-center text-xs py-1.5 px-3"
+                >
+                  Show All Results
+                </button>
+              </div>
+            </div>
+          </div>
+
         </div>
+
       </div>
     </div>
 
