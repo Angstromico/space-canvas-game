@@ -70,8 +70,7 @@ let playerId: string | undefined = playerName
 const updatePilotDisplay = () => {
   const display = document.getElementById('current-pilot-display')
   const signOffBtn = document.getElementById('sign-off')
-  const nameInput = document.getElementById('username') as HTMLInputElement
-  const submitBtn = document.getElementById('btnSubmit') as HTMLButtonElement
+  const registrySection = document.getElementById('pilot-registry-section')
   
   const hasPilot = playerId && playerId.trim() !== ''
   
@@ -87,21 +86,13 @@ const updatePilotDisplay = () => {
     }
   }
 
-  // Prevent registration if pilot exists
-  if (nameInput) {
+  // Hide registration section if pilot exists
+  if (registrySection) {
     if (hasPilot) {
-      nameInput.disabled = true
-      nameInput.placeholder = 'PILOT ACTIVE - SIGN OFF TO CHANGE'
-      nameInput.value = ''
+      registrySection.classList.add('hidden')
     } else {
-      nameInput.disabled = false
-      nameInput.placeholder = 'ENTER PILOT CALLSIGN'
+      registrySection.classList.remove('hidden')
     }
-  }
-
-  if (submitBtn && hasPilot) {
-    $('#btnSubmit').attr('disabled', 'true')
-    submitBtn.className = 'w-full bg-slate-800 text-slate-500 font-bold py-2.5 px-4 rounded-xl opacity-50 cursor-not-allowed font-orbitron tracking-widest text-xs uppercase'
   }
 }
 
