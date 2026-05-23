@@ -69,10 +69,53 @@ let playerId: string | undefined = playerName
 
 const updatePilotDisplay = () => {
   const display = document.getElementById('current-pilot-display')
+  const signOffBtn = document.getElementById('sign-off')
+  const nameInput = document.getElementById('username') as HTMLInputElement
+  const submitBtn = document.getElementById('btnSubmit') as HTMLButtonElement
+  
+  const hasPilot = playerId && playerId.trim() !== ''
+  
   if (display) {
-    display.textContent = (playerId && playerId.trim() !== '' ? playerId : 'RECRUIT').toUpperCase()
+    display.textContent = (hasPilot ? playerId : 'RECRUIT').toUpperCase()
+  }
+
+  if (signOffBtn) {
+    if (hasPilot) {
+      signOffBtn.classList.remove('hidden')
+    } else {
+      signOffBtn.classList.add('hidden')
+    }
+  }
+
+  // Prevent registration if pilot exists
+  if (nameInput) {
+    if (hasPilot) {
+      nameInput.disabled = true
+      nameInput.placeholder = 'PILOT ACTIVE - SIGN OFF TO CHANGE'
+      nameInput.value = ''
+    } else {
+      nameInput.disabled = false
+      nameInput.placeholder = 'ENTER PILOT CALLSIGN'
+    }
+  }
+
+  if (submitBtn && hasPilot) {
+    $('#btnSubmit').attr('disabled', 'true')
+    submitBtn.className = 'w-full bg-slate-800 text-slate-500 font-bold py-2.5 px-4 rounded-xl opacity-50 cursor-not-allowed font-orbitron tracking-widest text-xs uppercase'
   }
 }
+
+// Sign off logic
+document.addEventListener('click', (e) => {
+  const target = e.target as HTMLElement
+  if (target && target.id === 'sign-off') {
+    playerId = ''
+    playerName = ''
+    initialSetting.playerName = ''
+    localStorage.setItem('player-settings', JSON.stringify(initialSetting))
+    updatePilotDisplay()
+  }
+})
 
 document.addEventListener('DOMContentLoaded', () => {
   if (localInfo) {
