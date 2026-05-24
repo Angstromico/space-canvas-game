@@ -62,7 +62,7 @@ let localSettings: PlayerSettings = JSON.parse(
   localStorage.getItem('player-settings') || 'null'
 )
 
-const initialSetting: PlayerSettings = localSettings || {
+const defaultSettings: PlayerSettings = {
   music: true,
   sounds: true,
   playerName: '',
@@ -70,6 +70,13 @@ const initialSetting: PlayerSettings = localSettings || {
   difficulty: time,
   pauseTrack: 1,
   savedPilots: [],
+}
+
+const initialSetting: PlayerSettings = { ...defaultSettings, ...localSettings }
+
+// Ensure savedPilots is always an array even if localSettings was partial
+if (!Array.isArray(initialSetting.savedPilots)) {
+  initialSetting.savedPilots = []
 }
 
 let {
@@ -178,9 +185,11 @@ const updatePilotDisplay = () => {
   if (registryForm) {
     if (hasPilot) {
       registryForm.classList.add('hidden')
+      registryForm.classList.add('toggle-form') // Ensure it's hidden from toggle logic too
       if (registerLabel) registerLabel.classList.add('hidden')
     } else {
       registryForm.classList.remove('hidden')
+      registryForm.classList.remove('toggle-form') // Force show when no pilot
       if (registerLabel) registerLabel.classList.remove('hidden')
     }
   }
@@ -263,8 +272,12 @@ const arrowBurguer = document.querySelector('.navbar-brand') as HTMLElement
 
 if (burger) {
   burger.onclick = () => {
-    const form = document.querySelector('form')
-    form?.classList.toggle('toggle-form')
+    // Only allow toggling if a pilot is already active
+    const hasPilot = playerId && playerId.trim() !== ''
+    if (hasPilot) {
+      const form = document.querySelector('form')
+      form?.classList.toggle('toggle-form')
+    }
   }
 }
 
