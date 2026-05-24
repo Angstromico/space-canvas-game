@@ -130,7 +130,7 @@ const showNotification = (message: string, type: 'info' | 'error' | 'success' = 
   }, 4000)
 }
 
-const renderPilotList = () => {
+const renderPilotList = (filter: string = '') => {
   const listContainer = document.getElementById('pilot-list')
   const managementSection = document.getElementById('pilot-management')
   if (!listContainer || !managementSection) return
@@ -144,7 +144,20 @@ const renderPilotList = () => {
   managementSection.classList.remove('hidden')
   listContainer.innerHTML = ''
 
-  pilots.forEach((pilot) => {
+  const filteredPilots = pilots.filter(p => 
+    p.toLowerCase().includes(filter.toLowerCase())
+  )
+
+  if (filteredPilots.length === 0) {
+    listContainer.innerHTML = `
+      <div class="text-center py-4 border border-dashed border-slate-800 rounded-xl">
+        <p class="text-[10px] text-slate-500 font-orbitron uppercase tracking-widest">No matching pilots</p>
+      </div>
+    `
+    return
+  }
+
+  filteredPilots.forEach((pilot) => {
     const div = document.createElement('div')
     div.className =
       'flex items-center justify-between bg-slate-950/40 border border-slate-800/60 rounded-lg p-2 group transition-all hover:border-cyan-500/30'
@@ -225,6 +238,16 @@ const renderPilotList = () => {
     }
   })
 }
+
+// Global search handler
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('pilot-search') as HTMLInputElement
+  if (searchInput) {
+    searchInput.oninput = () => {
+      renderPilotList(searchInput.value)
+    }
+  }
+})
 
 const updatePilotDisplay = () => {
   const display = document.getElementById('current-pilot-display')
