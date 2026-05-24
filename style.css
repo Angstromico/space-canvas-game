@@ -3,6 +3,7 @@ html {
   box-sizing: border-box;
   margin: 0;
   font-size: 62.5%; /* 1rem = 10px */
+  overflow-x: hidden;
 }
 *,
 *:before,
@@ -14,7 +15,9 @@ html {
 body {
   background-color: #020617;
   overflow: hidden;
+  overflow-x: hidden;
   font-family: 'Rajdhani', sans-serif;
+  width: 100%;
 }
 
 canvas {
