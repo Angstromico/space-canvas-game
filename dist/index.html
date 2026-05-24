@@ -40,7 +40,7 @@
       crossorigin="anonymous"
     />
     <title>Space Game</title>
-    <script type="module" crossorigin src="/assets/index-od8WZqSy.js"></script>
+    <script type="module" crossorigin src="/assets/index-D5iE6uDP.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-8mV12s3X.css">
   </head>
   <body>
@@ -132,12 +132,17 @@
               <a class="navbar-brand hidden" href="/">Add Player</a> <!-- Kept for compatibility but hidden -->
             </div>
 
+            <!-- Pilot List (Selection/Management) -->
+            <div id="pilot-management" class="mb-4 hidden">
+              <p class="text-[10px] text-slate-400 tracking-wider font-orbitron uppercase mb-2">ACTIVE ROSTER</p>
+              <div id="pilot-list" class="flex flex-col gap-2 max-h-32 overflow-y-auto pr-2 custom-scrollbar">
+                <!-- Pilots will be injected here -->
+              </div>
+            </div>
+
             <!-- Pilot Registry Form -->
             <div class="form-container relative w-full !p-0 !m-0 !top-0 !left-0 !position-relative" id="form-container">
-              <form
-                class="w-full value toggle-form !p-0 !m-0"
-                id="register"
-              >
+              <p id="register-label" class="text-[10px] text-slate-400 tracking-wider font-orbitron uppercase mb-2">NEW PILOT REGISTRATION</p>
                 <div class="mb-3">
                   <input
                     class="bg-slate-950 border border-slate-800 focus:border-cyan-500 text-white placeholder-slate-600 rounded-xl w-full py-2 px-3 focus:outline-none focus:ring-1 focus:ring-cyan-500/50 transition-all font-rajdhani text-base"

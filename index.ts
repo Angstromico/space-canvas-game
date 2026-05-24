@@ -51,6 +51,7 @@ interface PlayerSettings {
   scorePoints: number | string
   difficulty: number
   pauseTrack: number
+  savedPilots: string[]
 }
 
 // Check LocalStorage
@@ -68,19 +69,100 @@ const initialSetting: PlayerSettings = localSettings || {
   scorePoints: 0,
   difficulty: time,
   pauseTrack: 1,
+  savedPilots: [],
 }
 
-let { music, sounds, playerName, scorePoints, difficulty, pauseTrack: savedPauseTrack } = initialSetting
+let {
+  music,
+  sounds,
+  playerName,
+  scorePoints,
+  difficulty,
+  pauseTrack: savedPauseTrack,
+} = initialSetting
 pauseTrack = savedPauseTrack || 1
 let playerId: string | undefined = playerName
+
+const renderPilotList = () => {
+  const listContainer = document.getElementById('pilot-list')
+  const managementSection = document.getElementById('pilot-management')
+  if (!listContainer || !managementSection) return
+
+  const pilots = initialSetting.savedPilots || []
+  if (pilots.length === 0) {
+    managementSection.classList.add('hidden')
+    return
+  }
+
+  managementSection.classList.remove('hidden')
+  listContainer.innerHTML = ''
+
+  pilots.forEach((pilot) => {
+    const div = document.createElement('div')
+    div.className =
+      'flex items-center justify-between bg-slate-950/40 border border-slate-800/60 rounded-lg p-2 group transition-all hover:border-cyan-500/30'
+    
+    const isActive = pilot === playerId
+    
+    div.innerHTML = `
+      <span class="font-orbitron text-[11px] ${
+        isActive ? 'text-cyan-400 font-bold' : 'text-slate-300'
+      } tracking-wider uppercase">${pilot}</span>
+      <div class="flex gap-2">
+        ${
+          !isActive
+            ? `<button class="select-pilot text-[9px] bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/20 px-2 py-1 rounded uppercase font-orbitron transition-all" data-name="${pilot}">FLY</button>`
+            : '<span class="text-[9px] text-cyan-400 font-orbitron uppercase py-1 px-2 border border-cyan-500/10 bg-cyan-500/5 rounded">ACTIVE</span>'
+        }
+        <button class="delete-pilot text-[9px] bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-2 py-1 rounded uppercase font-orbitron transition-all" data-name="${pilot}">SCRAP</button>
+      </div>
+    `
+    listContainer.appendChild(div)
+  })
+
+  // Add event listeners for select and delete
+  listContainer.querySelectorAll('.select-pilot').forEach((btn) => {
+    ;(btn as HTMLElement).onclick = () => {
+      const name = (btn as HTMLElement).getAttribute('data-name')
+      if (name) {
+        playerId = name
+        playerName = name
+        initialSetting.playerName = name
+        localStorage.setItem('player-settings', JSON.stringify(initialSetting))
+        updatePilotDisplay()
+      }
+    }
+  })
+
+  listContainer.querySelectorAll('.delete-pilot').forEach((btn) => {
+    ;(btn as HTMLElement).onclick = () => {
+      const name = (btn as HTMLElement).getAttribute('data-name')
+      if (name) {
+        if (confirm(`ARE YOU SURE YOU WANT TO SCRAP PILOT ${name.toUpperCase()}?`)) {
+          initialSetting.savedPilots = initialSetting.savedPilots.filter(
+            (p) => p !== name
+          )
+          if (playerId === name) {
+            playerId = ''
+            playerName = ''
+            initialSetting.playerName = ''
+          }
+          localStorage.setItem('player-settings', JSON.stringify(initialSetting))
+          updatePilotDisplay()
+        }
+      }
+    }
+  })
+}
 
 const updatePilotDisplay = () => {
   const display = document.getElementById('current-pilot-display')
   const signOffBtn = document.getElementById('sign-off')
-  const registrySection = document.getElementById('pilot-registry-section')
-  
+  const registryForm = document.getElementById('register')
+  const registerLabel = document.getElementById('register-label')
+
   const hasPilot = playerId && playerId.trim() !== ''
-  
+
   if (display) {
     display.textContent = (playerId || 'RECRUIT').toUpperCase()
   }
@@ -93,14 +175,17 @@ const updatePilotDisplay = () => {
     }
   }
 
-  // Hide registration section if pilot exists
-  if (registrySection) {
+  if (registryForm) {
     if (hasPilot) {
-      registrySection.classList.add('hidden')
+      registryForm.classList.add('hidden')
+      if (registerLabel) registerLabel.classList.add('hidden')
     } else {
-      registrySection.classList.remove('hidden')
+      registryForm.classList.remove('hidden')
+      if (registerLabel) registerLabel.classList.remove('hidden')
     }
   }
+
+  renderPilotList()
 }
 
 // Sign off logic
@@ -1210,6 +1295,12 @@ if (namePlayer) {
       playerId = userName
       playerName = userName
       initialSetting.playerName = playerName
+
+      // Add to saved pilots if not already there
+      if (!initialSetting.savedPilots.includes(userName)) {
+        initialSetting.savedPilots.push(userName)
+      }
+
       localStorage.setItem('player-settings', JSON.stringify(initialSetting))
       updatePilotDisplay()
     }
