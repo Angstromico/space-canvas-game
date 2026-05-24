@@ -40,7 +40,7 @@
       crossorigin="anonymous"
     />
     <title>Space Game</title>
-    <script type="module" crossorigin src="/assets/index-HhYA8EYb.js"></script>
+    <script type="module" crossorigin src="/assets/index-DP6wT82r.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-DfKzy1cZ.css">
   </head>
   <body>
@@ -52,6 +52,7 @@
     <!-- OST -->
     <audio id="main" loop src="/assets/main-DTARZTU2.mp3"></audio>
     <audio id="pause" loop src="/assets/pause-VErJ8Ju0.mp3"></audio>
+    <audio id="pause-alternate" loop src="/assets/Paused_at_Dusk-vDKVofPU.mp3"></audio>
     <div class="fixed text-white ml-2 mt-1 select-none">
       <span>SCORE:</span><span id="score"> 0</span>
     </div>
@@ -88,9 +89,14 @@
                 </div>
               </div>
               <div class="h-10 w-[1px] bg-slate-800"></div>
-              <div class="text-right">
+              <div class="text-right flex flex-col items-end">
                 <p class="text-[10px] text-slate-400 tracking-wider font-orbitron uppercase">ACTIVE PILOT</p>
-                <span id="current-pilot-display" class="text-lg font-bold font-orbitron text-cyan-400 tracking-wide uppercase drop-shadow-[0_0_8px_rgba(34,211,238,0.25)] block mt-1">RECRUIT</span>
+                <div class="flex items-center gap-2 mt-1">
+                  <span id="current-pilot-display" class="text-lg font-bold font-orbitron text-cyan-400 tracking-wide uppercase drop-shadow-[0_0_8px_rgba(34,211,238,0.25)] block">RECRUIT</span>
+                  <button id="sign-off" class="hidden text-[9px] bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-2 py-0.5 rounded uppercase font-orbitron transition-all">
+                    Sign Off
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -106,40 +112,13 @@
             </button>
           </div>
 
-          <!-- Audio Cockpit Controls -->
-          <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4">
-            <p class="text-xs text-slate-400 tracking-widest font-orbitron uppercase mb-3 text-left">System Sound Feed</p>
-            <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
-              <!-- Music Mute controls -->
-              <div class="flex items-center justify-between w-full sm:w-auto gap-3 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80">
-                <span class="text-[10px] text-slate-400 font-orbitron uppercase pl-2">MUSIC</span>
-                <div class="flex gap-1.5">
-                  <div class="no px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center">
-                    MUTE
-                  </div>
-                  <div class="sound chosen px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center">
-                    PLAY
-                  </div>
-                </div>
-              </div>
-
-              <!-- Ambient button -->
-              <button
-                id="sounds-off"
-                class="w-full sm:w-auto font-orbitron font-bold text-[10px] px-3 py-2.5 rounded-xl border border-blue-500/20 bg-blue-950/15 text-blue-400 hover:bg-blue-950/30 hover:border-blue-500/40 transition-all duration-300 uppercase"
-              >
-                DISABLE AMBIENT SOUNDS
-              </button>
-            </div>
-          </div>
-
         </div>
 
         <!-- RIGHT PANEL: Config & Records -->
         <div class="md:col-span-6 flex flex-col space-y-6 mt-6 md:mt-0">
           
           <!-- Pilot Registry Header / Toggler -->
-          <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4">
+          <div id="pilot-registry-section" class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4">
             <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-3">
               <div class="flex items-center gap-2">
                 <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
@@ -213,6 +192,48 @@
             </div>
           </div>
 
+        </div>
+
+        <!-- BOTTOM PANEL: System Sound Feed -->
+        <div class="md:col-span-12">
+          <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4">
+            <p class="text-xs text-slate-400 tracking-widest font-orbitron uppercase mb-3 text-left">System Sound Feed</p>
+            <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <!-- Music Mute controls -->
+              <div class="flex items-center justify-between w-full sm:w-auto gap-3 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80">
+                <span class="text-[10px] text-slate-400 font-orbitron uppercase pl-2">MUSIC</span>
+                <div class="flex gap-1.5">
+                  <div class="no px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center">
+                    MUTE
+                  </div>
+                  <div class="sound chosen px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center">
+                    PLAY
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pause Track selection -->
+              <div class="flex items-center justify-between w-full sm:w-auto gap-3 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80">
+                <span class="text-[10px] text-slate-400 font-orbitron uppercase pl-2">PAUSE TRACK</span>
+                <div class="flex gap-1.5">
+                  <div id="pause-track-1" class="pause-track chosen px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center cursor-pointer">
+                    ORIGINAL
+                  </div>
+                  <div id="pause-track-2" class="pause-track px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center cursor-pointer">
+                    DUSK
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ambient button -->
+              <button
+                id="sounds-off"
+                class="w-full sm:w-auto font-orbitron font-bold text-[10px] px-4 py-2.5 rounded-xl border border-blue-500/20 bg-blue-950/15 text-blue-400 hover:bg-blue-950/30 hover:border-blue-500/40 transition-all duration-300 uppercase whitespace-nowrap"
+              >
+                DISABLE AMBIENT SOUNDS
+              </button>
+            </div>
+          </div>
         </div>
 
       </div>

@@ -22,6 +22,9 @@ document.body.appendChild(livesContainer)
 // Type definitions for audio elements
 const mainMusic = document.getElementById('main') as HTMLAudioElement
 const pauseSong = document.getElementById('pause') as HTMLAudioElement
+const pauseSongAlternate = document.getElementById(
+  'pause-alternate'
+) as HTMLAudioElement
 const overSong = document.getElementById('over') as HTMLAudioElement
 const hitSound = document.getElementById('impact') as HTMLAudioElement
 const laserSound = document.getElementById('laser') as HTMLAudioElement
@@ -32,6 +35,7 @@ const destructionSound = document.getElementById(
 let time: number = 2500
 let musicGame: boolean = true
 let soundsEffects: boolean = true
+let pauseTrack: number = 1
 
 const showList = document.getElementById('show-list')!
 
@@ -46,6 +50,7 @@ interface PlayerSettings {
   playerName: string
   scorePoints: number | string
   difficulty: number
+  pauseTrack: number
 }
 
 // Check LocalStorage
@@ -62,9 +67,11 @@ const initialSetting: PlayerSettings = localSettings || {
   playerName: '',
   scorePoints: 0,
   difficulty: time,
+  pauseTrack: 1,
 }
 
-let { music, sounds, playerName, scorePoints, difficulty } = initialSetting
+let { music, sounds, playerName, scorePoints, difficulty, pauseTrack: savedPauseTrack } = initialSetting
+pauseTrack = savedPauseTrack || 1
 let playerId: string | undefined = playerName
 
 const updatePilotDisplay = () => {
@@ -75,7 +82,7 @@ const updatePilotDisplay = () => {
   const hasPilot = playerId && playerId.trim() !== ''
   
   if (display) {
-    display.textContent = (hasPilot ? playerId : 'RECRUIT').toUpperCase()
+    display.textContent = (playerId || 'RECRUIT').toUpperCase()
   }
 
   if (signOffBtn) {
@@ -116,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (localSettings) {
-    const { scorePoints, music, sounds, playerName, difficulty } = localSettings
+    const { scorePoints, music, sounds, playerName, difficulty, pauseTrack: savedTrack } = localSettings
 
     if (Number(scorePoints) > 0) {
       score2.innerHTML = scorePoints.toString()
@@ -137,6 +144,9 @@ document.addEventListener('DOMContentLoaded', () => {
       ;(levels[1] as HTMLElement).click()
     } else if (difficulty === 1000) {
       ;(levels[2] as HTMLElement).click()
+    }
+    if (savedTrack === 2) {
+      ;(document.getElementById('pause-track-2') as HTMLElement)?.click()
     }
   }
   updatePilotDisplay()
@@ -611,6 +621,7 @@ function animation() {
   }
 
   if (pauseSong) pauseSong.pause()
+  if (pauseSongAlternate) pauseSongAlternate.pause()
 
   animationID = requestAnimationFrame(animation)
   c.fillStyle = 'rgba(0, 0, 0, 0.1)'
@@ -870,7 +881,11 @@ document.addEventListener('keypress', (e) => {
 
   if (key === 'Enter' || key === 'Escape' || key === 'Tab' || key === ' ') {
     if (musicGame) {
-      if (pauseSong) pauseSong.play()
+      if (pauseTrack === 2) {
+        if (pauseSongAlternate) pauseSongAlternate.play()
+      } else {
+        if (pauseSong) pauseSong.play()
+      }
     }
     cancelAnimationFrame(animationID)
     initial.style.display = 'flex'
@@ -947,6 +962,30 @@ if (soundsOff) {
       sounds = true
       initialSetting.sounds = sounds
     }
+  }
+}
+
+// Pause Track Selection
+const pauseTrack1 = document.getElementById('pause-track-1') as HTMLElement
+const pauseTrack2 = document.getElementById('pause-track-2') as HTMLElement
+
+if (pauseTrack1) {
+  pauseTrack1.onclick = () => {
+    pauseTrack = 1
+    initialSetting.pauseTrack = 1
+    pauseTrack1.classList.add('chosen')
+    pauseTrack2.classList.remove('chosen')
+    localStorage.setItem('player-settings', JSON.stringify(initialSetting))
+  }
+}
+
+if (pauseTrack2) {
+  pauseTrack2.onclick = () => {
+    pauseTrack = 2
+    initialSetting.pauseTrack = 2
+    pauseTrack2.classList.add('chosen')
+    pauseTrack1.classList.remove('chosen')
+    localStorage.setItem('player-settings', JSON.stringify(initialSetting))
   }
 }
 

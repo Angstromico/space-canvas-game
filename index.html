@@ -52,6 +52,7 @@
     <!-- OST -->
     <audio id="main" loop src="music/main.mp3"></audio>
     <audio id="pause" loop src="music/pause.mp3"></audio>
+    <audio id="pause-alternate" loop src="music/Paused_at_Dusk.mp3"></audio>
     <div class="fixed text-white ml-2 mt-1 select-none">
       <span>SCORE:</span><span id="score"> 0</span>
     </div>
@@ -207,6 +208,19 @@
                   </div>
                   <div class="sound chosen px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center">
                     PLAY
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pause Track selection -->
+              <div class="flex items-center justify-between w-full sm:w-auto gap-3 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80">
+                <span class="text-[10px] text-slate-400 font-orbitron uppercase pl-2">PAUSE TRACK</span>
+                <div class="flex gap-1.5">
+                  <div id="pause-track-1" class="pause-track chosen px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center cursor-pointer">
+                    ORIGINAL
+                  </div>
+                  <div id="pause-track-2" class="pause-track px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center cursor-pointer">
+                    DUSK
                   </div>
                 </div>
               </div>
