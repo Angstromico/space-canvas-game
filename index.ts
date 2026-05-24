@@ -933,6 +933,17 @@ if (sound) {
       musicGame = true
       music = true
       initialSetting.music = music
+
+      // Real-time audio update
+      if (initial.style.display === 'none') {
+        if (mainMusic) mainMusic.play()
+      } else {
+        if (pauseTrack === 2) {
+          if (pauseSongAlternate) pauseSongAlternate.play()
+        } else {
+          if (pauseSong) pauseSong.play()
+        }
+      }
     }
   }
 }
@@ -948,6 +959,11 @@ if (noSound) {
       musicGame = false
       music = false
       initialSetting.music = music
+
+      // Real-time audio update
+      if (mainMusic) mainMusic.pause()
+      if (pauseSong) pauseSong.pause()
+      if (pauseSongAlternate) pauseSongAlternate.pause()
     }
   }
 }
@@ -978,6 +994,24 @@ if (pauseTrackSelect) {
     pauseTrack = Number(pauseTrackSelect.value)
     initialSetting.pauseTrack = pauseTrack
     localStorage.setItem('player-settings', JSON.stringify(initialSetting))
+
+    // Real-time audio update if currently paused
+    if (initial.style.display !== 'none' && musicGame) {
+      if (pauseSong) {
+        pauseSong.pause()
+        pauseSong.currentTime = 0
+      }
+      if (pauseSongAlternate) {
+        pauseSongAlternate.pause()
+        pauseSongAlternate.currentTime = 0
+      }
+
+      if (pauseTrack === 2) {
+        if (pauseSongAlternate) pauseSongAlternate.play()
+      } else {
+        if (pauseSong) pauseSong.play()
+      }
+    }
   }
 }
 
