@@ -198,9 +198,9 @@
         <div class="md:col-span-12">
           <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4">
             <p class="text-xs text-slate-400 tracking-widest font-orbitron uppercase mb-3 text-left">System Sound Feed</p>
-            <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-center">
               <!-- Music Mute controls -->
-              <div class="flex items-center justify-between w-full sm:w-auto gap-3 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80">
+              <div class="flex items-center justify-between w-full gap-3 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80">
                 <span class="text-[10px] text-slate-400 font-orbitron uppercase pl-2">MUSIC</span>
                 <div class="flex gap-1.5">
                   <div class="no px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center">
@@ -213,7 +213,7 @@
               </div>
 
               <!-- Pause Track selection -->
-              <div class="flex items-center justify-between w-full sm:w-auto gap-3 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80">
+              <div class="flex items-center justify-between w-full gap-3 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80">
                 <span class="text-[10px] text-slate-400 font-orbitron uppercase pl-2">PAUSE TRACK</span>
                 <div class="flex gap-1.5">
                   <div id="pause-track-1" class="pause-track chosen px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center cursor-pointer">
@@ -228,7 +228,7 @@
               <!-- Ambient button -->
               <button
                 id="sounds-off"
-                class="w-full sm:w-auto font-orbitron font-bold text-[10px] px-4 py-2.5 rounded-xl border border-blue-500/20 bg-blue-950/15 text-blue-400 hover:bg-blue-950/30 hover:border-blue-500/40 transition-all duration-300 uppercase whitespace-nowrap"
+                class="w-full font-orbitron font-bold text-[10px] px-4 py-2.5 rounded-xl border border-blue-500/20 bg-blue-950/15 text-blue-400 hover:bg-blue-950/30 hover:border-blue-500/40 transition-all duration-300 uppercase sm:col-span-2 lg:col-span-1"
               >
                 DISABLE AMBIENT SOUNDS
               </button>
