@@ -90,6 +90,46 @@ let {
 pauseTrack = savedPauseTrack || 1
 let playerId: string | undefined = playerName
 
+const showNotification = (message: string, type: 'info' | 'error' | 'success' = 'info') => {
+  const container = document.getElementById('notification-container')
+  if (!container) return
+
+  const notification = document.createElement('div')
+  const colors = {
+    info: 'border-cyan-500/50 bg-slate-900/90 text-cyan-400',
+    error: 'border-red-500/50 bg-slate-900/90 text-red-400',
+    success: 'border-emerald-500/50 bg-slate-900/90 text-emerald-400'
+  }
+
+  notification.className = `min-w-[280px] p-4 rounded-xl border backdrop-blur-md shadow-2xl flex items-center gap-3 transform translate-x-full opacity-0 font-orbitron text-xs tracking-widest uppercase ${colors[type]}`
+  
+  notification.innerHTML = `
+    <div class="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></div>
+    <p class="flex-1">${message}</p>
+  `
+
+  container.appendChild(notification)
+
+  // Animate in
+  gsap.to(notification, {
+    x: 0,
+    opacity: 1,
+    duration: 0.5,
+    ease: 'power3.out'
+  })
+
+  // Remove after 4 seconds
+  setTimeout(() => {
+    gsap.to(notification, {
+      x: 100,
+      opacity: 0,
+      duration: 0.4,
+      ease: 'power3.in',
+      onComplete: () => notification.remove()
+    })
+  }, 4000)
+}
+
 const renderPilotList = () => {
   const listContainer = document.getElementById('pilot-list')
   const managementSection = document.getElementById('pilot-management')
@@ -137,6 +177,7 @@ const renderPilotList = () => {
         initialSetting.playerName = name
         localStorage.setItem('player-settings', JSON.stringify(initialSetting))
         updatePilotDisplay()
+        showNotification(`PILOT ${name.toUpperCase()} ACTIVE`, 'success')
       }
     }
   })
@@ -145,7 +186,8 @@ const renderPilotList = () => {
     ;(btn as HTMLElement).onclick = () => {
       const name = (btn as HTMLElement).getAttribute('data-name')
       if (name) {
-        if (confirm(`ARE YOU SURE YOU WANT TO SCRAP PILOT ${name.toUpperCase()}?`)) {
+        // Use a custom styled confirmation instead of native confirm
+        const confirmDelete = () => {
           initialSetting.savedPilots = initialSetting.savedPilots.filter(
             (p) => p !== name
           )
@@ -156,7 +198,29 @@ const renderPilotList = () => {
           }
           localStorage.setItem('player-settings', JSON.stringify(initialSetting))
           updatePilotDisplay()
+          showNotification(`PILOT ${name.toUpperCase()} DECOMMISSIONED`, 'error')
         }
+
+        // Creating a simple custom modal for confirmation
+        const modal = document.createElement('div')
+        modal.className = 'fixed inset-0 flex items-center justify-center z-[200] bg-slate-950/80 backdrop-blur-sm'
+        modal.innerHTML = `
+          <div class="bg-slate-900 border border-red-500/30 p-8 rounded-3xl max-w-sm w-full text-center shadow-[0_0_50px_rgba(239,68,68,0.2)]">
+            <h2 class="font-orbitron text-xl font-black text-red-500 mb-4 uppercase tracking-tighter">Decommission Pilot?</h2>
+            <p class="font-rajdhani text-slate-300 mb-8 uppercase tracking-[0.2em] text-xs font-bold">Are you sure you want to scrap pilot ${name.toUpperCase()}? This action is irreversible.</p>
+            <div class="flex gap-4">
+              <button id="cancel-scrap" class="flex-1 py-3 bg-slate-800 text-slate-400 font-orbitron text-[10px] font-bold rounded-xl hover:bg-slate-700 transition-all uppercase">Abort</button>
+              <button id="confirm-scrap" class="flex-1 py-3 bg-red-500 text-white font-orbitron text-[10px] font-bold rounded-xl hover:bg-red-600 shadow-[0_0_15px_rgba(239,68,68,0.4)] transition-all uppercase">Confirm Scrap</button>
+            </div>
+          </div>
+        `
+        document.body.appendChild(modal)
+
+        modal.querySelector('#cancel-scrap')?.addEventListener('click', () => modal.remove())
+        modal.querySelector('#confirm-scrap')?.addEventListener('click', () => {
+          confirmDelete()
+          modal.remove()
+        })
       }
     }
   })
@@ -1316,6 +1380,11 @@ if (namePlayer) {
 
       localStorage.setItem('player-settings', JSON.stringify(initialSetting))
       updatePilotDisplay()
+      
+      // Ensure the notification shows after the UI state has shifted
+      setTimeout(() => {
+        showNotification(`PILOT ${(playerId || 'RECRUIT').toUpperCase()} REGISTERED`, 'success')
+      }, 100)
     }
     namePlayer.reset()
     if (btn) {
@@ -1323,8 +1392,6 @@ if (namePlayer) {
         'w-full bg-slate-800 text-slate-500 font-bold py-2.5 px-4 rounded-xl opacity-50 cursor-not-allowed font-orbitron tracking-widest text-xs uppercase'
       $('#btnSubmit').attr('disabled', 'true')
     }
-    // Show a beautiful custom feedback modal or update HUD name!
-    alert(`Your callsign is registered as: ${playerId}`)
   })
 }
 
