@@ -153,6 +153,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   updatePilotDisplay()
+
+  // Attempt to play initial menu music (pauseSong) if music is enabled
+  if (musicGame && music) {
+    const playInitialMusic = () => {
+      if (pauseTrack === 2) {
+        if (pauseSongAlternate) pauseSongAlternate.play().catch(() => {})
+      } else {
+        if (pauseSong) pauseSong.play().catch(() => {})
+      }
+      // Remove listeners after first successful interaction to avoid redundant calls
+      document.removeEventListener('click', playInitialMusic)
+      document.removeEventListener('keydown', playInitialMusic)
+    }
+
+    // Add listeners for initial interaction to satisfy browser autoplay policies
+    document.addEventListener('click', playInitialMusic)
+    document.addEventListener('keydown', playInitialMusic)
+  }
 })
 
 const burger = document.querySelector('.animated-icon1') as HTMLElement
