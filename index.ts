@@ -1074,7 +1074,7 @@ start.onclick = () => {
 }
 
 // Pause the game with keyboard
-document.addEventListener('keypress', (e) => {
+document.addEventListener('keydown', (e) => {
   if (mainMusic) mainMusic.pause()
   if (musicGame) {
     /* const pauseSong = document.getElementById('pause'); // Defined globally */
@@ -1084,11 +1084,7 @@ document.addEventListener('keypress', (e) => {
 
   if (key === 'Enter' || key === 'Escape' || key === 'Tab' || key === ' ') {
     if (musicGame) {
-      if (pauseTrack === 2) {
-        if (pauseSongAlternate) pauseSongAlternate.play()
-      } else {
-        if (pauseSong) pauseSong.play()
-      }
+      if (pauseSong) pauseSong.play()
     }
     cancelAnimationFrame(animationID)
     initial.style.display = 'flex'
@@ -1111,7 +1107,7 @@ document.addEventListener('keypress', (e) => {
     dX -= 1
     player = new Player(dX, dY, 25, 'blue')
   }
-  if (key === 'ArrowRight' || key === 's') {
+  if (key === 'ArrowRight' || key === 'd') {
     dX += 1
     player = new Player(dX, dY, 25, 'blue')
   }
