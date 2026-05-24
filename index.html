@@ -215,14 +215,10 @@
               <!-- Pause Track selection -->
               <div class="flex items-center justify-between w-full gap-3 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80">
                 <span class="text-[10px] text-slate-400 font-orbitron uppercase pl-2">PAUSE TRACK</span>
-                <div class="flex gap-1.5">
-                  <div id="pause-track-1" class="pause-track chosen px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center cursor-pointer">
-                    ORIGINAL
-                  </div>
-                  <div id="pause-track-2" class="pause-track px-3 py-1 rounded-lg font-orbitron text-[10px] font-bold transition-all duration-300 text-center flex items-center justify-center cursor-pointer">
-                    DUSK
-                  </div>
-                </div>
+                <select id="pause-track-select" class="bg-slate-900 text-cyan-400 font-orbitron text-[10px] font-bold py-1 px-2 rounded-lg border border-cyan-500/20 focus:outline-none focus:ring-1 focus:ring-cyan-500/50 transition-all cursor-pointer">
+                  <option value="1">ORIGINAL</option>
+                  <option value="2">DUSK</option>
+                </select>
               </div>
 
               <!-- Ambient button -->

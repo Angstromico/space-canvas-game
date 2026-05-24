@@ -145,8 +145,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (difficulty === 1000) {
       ;(levels[2] as HTMLElement).click()
     }
-    if (savedTrack === 2) {
-      ;(document.getElementById('pause-track-2') as HTMLElement)?.click()
+    if (savedTrack) {
+      const select = document.getElementById(
+        'pause-track-select'
+      ) as HTMLSelectElement
+      if (select) select.value = savedTrack.toString()
     }
   }
   updatePilotDisplay()
@@ -966,25 +969,14 @@ if (soundsOff) {
 }
 
 // Pause Track Selection
-const pauseTrack1 = document.getElementById('pause-track-1') as HTMLElement
-const pauseTrack2 = document.getElementById('pause-track-2') as HTMLElement
+const pauseTrackSelect = document.getElementById(
+  'pause-track-select'
+) as HTMLSelectElement
 
-if (pauseTrack1) {
-  pauseTrack1.onclick = () => {
-    pauseTrack = 1
-    initialSetting.pauseTrack = 1
-    pauseTrack1.classList.add('chosen')
-    pauseTrack2.classList.remove('chosen')
-    localStorage.setItem('player-settings', JSON.stringify(initialSetting))
-  }
-}
-
-if (pauseTrack2) {
-  pauseTrack2.onclick = () => {
-    pauseTrack = 2
-    initialSetting.pauseTrack = 2
-    pauseTrack2.classList.add('chosen')
-    pauseTrack1.classList.remove('chosen')
+if (pauseTrackSelect) {
+  pauseTrackSelect.onchange = () => {
+    pauseTrack = Number(pauseTrackSelect.value)
+    initialSetting.pauseTrack = pauseTrack
     localStorage.setItem('player-settings', JSON.stringify(initialSetting))
   }
 }
