@@ -951,6 +951,7 @@ if (sound) {
       musicGame = true
       music = true
       initialSetting.music = music
+      localStorage.setItem('player-settings', JSON.stringify(initialSetting))
 
       // Real-time audio update
       if (initial.style.display === 'none') {
@@ -977,6 +978,7 @@ if (noSound) {
       musicGame = false
       music = false
       initialSetting.music = music
+      localStorage.setItem('player-settings', JSON.stringify(initialSetting))
 
       // Real-time audio update
       if (mainMusic) mainMusic.pause()
@@ -999,6 +1001,7 @@ if (soundsOff) {
       sounds = true
       initialSetting.sounds = sounds
     }
+    localStorage.setItem('player-settings', JSON.stringify(initialSetting))
   }
 }
 
@@ -1051,6 +1054,8 @@ const levelChange = (element: Element, index: number) => {
     difficulty = 1000
     initialSetting.difficulty = difficulty
   }
+
+  localStorage.setItem('player-settings', JSON.stringify(initialSetting))
 
   if (index === 0 && !element.classList.contains('level-chosen')) {
     element.classList.add('level-chosen')
@@ -1205,6 +1210,7 @@ if (namePlayer) {
       playerId = userName
       playerName = userName
       initialSetting.playerName = playerName
+      localStorage.setItem('player-settings', JSON.stringify(initialSetting))
       updatePilotDisplay()
     }
     namePlayer.reset()
