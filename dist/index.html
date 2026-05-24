@@ -40,8 +40,8 @@
       crossorigin="anonymous"
     />
     <title>Space Game</title>
-    <script type="module" crossorigin src="/assets/index-BM2vhRvp.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-qSuAMdey.css">
+    <script type="module" crossorigin src="/assets/index-B6LIcZ-i.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-B1EY0ML4.css">
   </head>
   <body>
     <!-- Sounds Effects  -->
@@ -191,24 +191,28 @@
           </div>
 
           <!-- High Scores List -->
-          <div class="flex flex-col space-y-3">
-            <button
-              id="show-list"
-              class="show-list w-full text-center"
-            >
-              Show List
-            </button>
+          <div class="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-4">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                <span class="text-xs font-bold text-slate-200 tracking-widest font-orbitron uppercase">Global Rankings</span>
+              </div>
+              <button
+                id="show-list"
+                class="text-[10px] bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 border border-yellow-500/20 px-3 py-1 rounded-lg uppercase font-orbitron transition-all"
+              >
+                Show Scores
+              </button>
+            </div>
 
-            <div class="score-list toggle">
-              <h2 class="max-score text-center mb-4">BEST SCORES</h2>
-              <ul class="list list-none"></ul>
+            <div class="score-list toggle !border-none !bg-transparent !p-0 !mt-2 shadow-none">
               <div class="inner-list" id="inner"></div>
               <div class="button-container flex justify-center mt-3">
                 <button
                   id="show-all"
-                  class="show-list text-center text-xs py-1.5 px-3"
+                  class="show-list text-center text-[10px] py-1.5 px-3 w-full"
                 >
-                  Show All Results
+                  EXPAND ALL DATA
                 </button>
               </div>
             </div>

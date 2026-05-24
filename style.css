@@ -341,7 +341,7 @@ form:not(.toggle-form) {
 }
 
 .toggle {
-  display: none !important;
+  display: none;
 }
 
 .hide {

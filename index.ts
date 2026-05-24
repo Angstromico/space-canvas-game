@@ -297,11 +297,8 @@ document.addEventListener('click', (e) => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (localInfo) {
-    showList.classList.remove('hide')
-  } else {
-    showList.classList.add('hide')
-  }
+  // Ensure high score list is always accessible even if no scores exist yet
+  showList.classList.remove('hide')
 
   if (localSettings) {
     const { scorePoints, music, sounds, playerName, difficulty, pauseTrack: savedTrack } = localSettings
@@ -1276,9 +1273,9 @@ showList.onclick = () => {
   toggleScore('.toggle')
   show = !show
   if (show) {
-    showList.textContent = 'Show List'
+    showList.textContent = 'SHOW SCORES'
   } else {
-    showList.textContent = 'Hide List'
+    showList.textContent = 'HIDE SCORES'
   }
 }
 
@@ -1304,6 +1301,16 @@ let condition = false
 
 const resultsOnDOM = (arr: ScoreEntry[]) => {
   resultsContainer.innerHTML = ''
+  
+  if (arr.length === 0) {
+    resultsContainer.innerHTML = `
+      <div class="text-center py-6 border border-dashed border-slate-800 rounded-xl">
+        <p class="text-[10px] text-slate-500 font-orbitron uppercase tracking-widest">No mission data recorded</p>
+      </div>
+    `
+    return
+  }
+
   arr.forEach((element) => {
     const { name, puntuation } = element
     const li = document.createElement('LI')
